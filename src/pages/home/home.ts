@@ -9,15 +9,15 @@ import { NavController } from 'ionic-angular';
 })
 export class HomePage {
 
-  headerSize = 44;
-
   canvasWidth = window.innerWidth;
-  canvasHeight = window.innerHeight - 2*this.headerSize;
+  canvasHeight = window.innerHeight;
   draw = false;
   ppts = [];
 
   lineWidth = 10;
-  color = 'blue';
+  color = '#111111';
+
+  colors = ['#111111', '#DDDDDD', '#ffffff', '#2ECC40', '#0074D9', '#B10DC9', '#FF4136', '#FF851B', '#FFDC00'];
 
   @ViewChild('canvas') canvas;
   @ViewChild('tmpCanvas') tmpCanvas;
@@ -30,6 +30,22 @@ export class HomePage {
   ngOnInit() {
     let canvas = this.tmpCanvas.nativeElement;
     this.ctx = canvas.getContext('2d');
+  }
+
+  setColor(color) {
+    this.color = color;
+  }
+
+  isActiveColor(color) {
+    return this.color == color;
+  }
+
+  setSize(size) {
+    this.lineWidth = size;
+  }
+
+  isActiveSize(size) {
+    return this.lineWidth == size;
   }
 
   startDraw(e) {
@@ -54,7 +70,7 @@ export class HomePage {
     if(!this.draw) return;
 
     let x = e.touches[0].pageX;
-    let y = e.touches[0].pageY - this.headerSize;
+    let y = e.touches[0].pageY;
 
     this.ppts.push({x: x, y: y})
 

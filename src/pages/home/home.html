@@ -1,22 +1,23 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>
-      Paint
-    </ion-title>
-  </ion-navbar>
-</ion-header>
-
 <ion-content>
-  <div id="paint">
+  <div>
     <canvas [width]="canvasWidth" [height]="canvasHeight" #canvas></canvas>
     <canvas [width]="canvasWidth" [height]="canvasHeight" #tmpCanvas id="tmp-canvas" (touchstart)="startDraw($event)" (touchend)="endDraw($event)" (touchmove)="paint($event)"></canvas>
   </div>
 </ion-content>
 
-<ion-footer>
-  <ion-navbar text-center>
-    <ion-icon name="brush"></ion-icon>
-    <ion-icon name="color-palette"></ion-icon>
-    <ion-icon name="trash" (tap)="clear()"></ion-icon>
-  </ion-navbar>
-</ion-footer>
+<ion-fab left bottom>
+  <button ion-fab color="light"><ion-icon name="color-palette" class="half-transparent" [ngStyle]="{color: color}"></ion-icon></button>
+  <ion-fab-list side="top">
+    <button ion-fab *ngFor="let color of colors" (tap)="setColor(color)" [ngClass]="{active: isActiveColor(color)}"><ion-icon name="square" [ngStyle]="{color: color}"></ion-icon></button>
+  </ion-fab-list>
+  <ion-fab-list side="right">
+    <button ion-fab (tap)="setSize(5)" [ngClass]="{active: isActiveSize(5)}"><ion-icon name="radio-button-off" style="font-size:1rem" ></ion-icon></button>
+    <button ion-fab (tap)="setSize(10)" [ngClass]="{active: isActiveSize(10)}"><ion-icon name="radio-button-off" style="font-size:1.5rem" ></ion-icon></button>
+    <button ion-fab (tap)="setSize(15)" [ngClass]="{active: isActiveSize(15)}"><ion-icon name="radio-button-off" style="font-size:2rem" ></ion-icon></button>
+    <button ion-fab (tap)="setSize(20)" [ngClass]="{active: isActiveSize(20)}"><ion-icon name="radio-button-off" style="font-size:2.5rem" ></ion-icon></button>
+  </ion-fab-list>
+</ion-fab>
+
+<ion-fab right bottom>
+  <button ion-fab color="light" (tap)="clear()"><ion-icon name="trash" class="half-transparent"></ion-icon></button>
+</ion-fab>
