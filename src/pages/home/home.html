@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Paint
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div id="paint">
+    <canvas [width]="canvasWidth" [height]="canvasHeight" #canvas></canvas>
+    <canvas [width]="canvasWidth" [height]="canvasHeight" #tmpCanvas id="tmp-canvas" (touchstart)="startDraw($event)" (touchend)="endDraw($event)" (touchmove)="paint($event)"></canvas>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-navbar text-center>
+    <ion-icon name="brush"></ion-icon>
+    <ion-icon name="color-palette"></ion-icon>
+    <ion-icon name="trash" (tap)="clear()"></ion-icon>
+  </ion-navbar>
+</ion-footer>
