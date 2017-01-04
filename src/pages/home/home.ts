@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { ViewChild } from '@angular/core';
 
-import { NavController } from 'ionic-angular';
+import { AlertController } from 'ionic-angular';
+import { Splashscreen } from 'ionic-native';
+import { Base64ToGallery } from 'ionic-native';
 
 @Component({
   selector: 'page-home',
@@ -11,8 +13,12 @@ export class HomePage {
 
   canvasWidth = window.innerWidth;
   canvasHeight = window.innerHeight;
+  isPortrait = this.canvasHeight > this.canvasWidth;
   draw = false;
+
   ppts = [];
+  history = [];
+  future = [];
 
   lineWidth = 10;
   color = '#111111';
@@ -23,8 +29,30 @@ export class HomePage {
   @ViewChild('tmpCanvas') tmpCanvas;
   ctx;
 
-  constructor(public navCtrl: NavController) {
-    
+  flipImage(ctx, imgData) {
+    let newImgData = ctx.createImageData(imgData.height, imgData.width);
+    for(let i=0; i< newImgData.data.length; i += 4) {
+      let row = (i/4)%newImgData.width;
+      let column = Math.floor((i/4)/newImgData.width);
+      for(let j=0; j<4; j++) {
+        newImgData.data[i + j] = imgData.data[row*imgData.width*4 + column*4 + j];
+      }
+    }
+    return newImgData;
+  }
+
+  constructor(public alertCtrl: AlertController) {
+    window.addEventListener('orientationchange', () => {
+      let ctx = this.canvas.nativeElement.getContext('2d');
+      let imgData = ctx.getImageData(0,0,this.canvasWidth,this.canvasHeight);
+      this.canvasWidth = window.innerWidth;
+      this.canvasHeight = window.innerHeight;
+      this.isPortrait = this.canvasHeight > this.canvasWidth;
+      setTimeout(() => {
+        if(imgData.width == this.canvasWidth) ctx.putImageData(imgData, 0, 0)
+        else ctx.putImageData(this.flipImage(ctx, imgData), 0, 0);
+      })
+    })
   }
 
   ngOnInit() {
@@ -52,17 +80,52 @@ export class HomePage {
     this.draw = true;
   }
 
+  undo(redo) {
+    let imgData = this[redo?'future':'history'].pop();
+    let ctx = this.canvas.nativeElement.getContext('2d');
+    let oldImgData = ctx.getImageData(0,0,this.canvasWidth,this.canvasHeight);
+    this[redo?'history':'future'].push(oldImgData);
+    if(imgData.width == this.canvasWidth) ctx.putImageData(imgData, 0, 0)
+    else ctx.putImageData(this.flipImage(ctx, imgData), 0, 0);
+  }
+
+  save() {
+    let base64Data = this.canvas.nativeElement.toDataURL();
+    Base64ToGallery.base64ToGallery(base64Data).then(
+      res => {
+        let alert = this.alertCtrl.create({
+          title: 'Success!',
+          subTitle: 'Drawing was saved!',
+          buttons: ['OK']
+        });
+        alert.present();
+      },
+      err => {
+        let alert = this.alertCtrl.create({
+          title: 'Error!',
+          subTitle: err,
+          buttons: ['OK']
+        });
+        alert.present();
+      }
+    );
+  }
+
   endDraw(e) {
     this.draw = false;
     let ctx =  this.canvas.nativeElement.getContext('2d');
+    this.history.push(ctx.getImageData(0,0,this.canvasWidth,this.canvasHeight));
     ctx.drawImage(this.tmpCanvas.nativeElement, 0, 0);
     this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
     this.ppts = [];
+    this.future = [];
   }
 
   clear() {
     let ctx = this.canvas.nativeElement.getContext('2d');
     ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    this.history = [];
+    this.future = [];
   }
 
   paint(e) {

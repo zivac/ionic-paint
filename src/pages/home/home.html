@@ -7,17 +7,42 @@
 
 <ion-fab left bottom>
   <button ion-fab color="light"><ion-icon name="color-palette" class="half-transparent" [ngStyle]="{color: color}"></ion-icon></button>
-  <ion-fab-list side="top">
-    <button ion-fab *ngFor="let color of colors" (tap)="setColor(color)" [ngClass]="{active: isActiveColor(color)}"><ion-icon name="square" [ngStyle]="{color: color}"></ion-icon></button>
-  </ion-fab-list>
-  <ion-fab-list side="right">
-    <button ion-fab (tap)="setSize(5)" [ngClass]="{active: isActiveSize(5)}"><ion-icon name="radio-button-off" style="font-size:1rem" ></ion-icon></button>
-    <button ion-fab (tap)="setSize(10)" [ngClass]="{active: isActiveSize(10)}"><ion-icon name="radio-button-off" style="font-size:1.5rem" ></ion-icon></button>
-    <button ion-fab (tap)="setSize(15)" [ngClass]="{active: isActiveSize(15)}"><ion-icon name="radio-button-off" style="font-size:2rem" ></ion-icon></button>
-    <button ion-fab (tap)="setSize(20)" [ngClass]="{active: isActiveSize(20)}"><ion-icon name="radio-button-off" style="font-size:2.5rem" ></ion-icon></button>
-  </ion-fab-list>
+  <div [hidden]="!isPortrait">
+    <ion-fab-list side="top">
+      <button ion-fab *ngFor="let color of colors" (tap)="setColor(color)" [ngClass]="{active: isActiveColor(color)}"><ion-icon name="square" [ngStyle]="{color: color}"></ion-icon></button>
+    </ion-fab-list>
+    <ion-fab-list side="right">
+      <button ion-fab (tap)="setSize(5)" [ngClass]="{active: isActiveSize(5)}"><ion-icon name="radio-button-off" style="font-size:1rem" ></ion-icon></button>
+      <button ion-fab (tap)="setSize(10)" [ngClass]="{active: isActiveSize(10)}"><ion-icon name="radio-button-off" style="font-size:1.5rem" ></ion-icon></button>
+      <button ion-fab (tap)="setSize(15)" [ngClass]="{active: isActiveSize(15)}"><ion-icon name="radio-button-off" style="font-size:2rem" ></ion-icon></button>
+      <button ion-fab (tap)="setSize(20)" [ngClass]="{active: isActiveSize(20)}"><ion-icon name="radio-button-off" style="font-size:2.5rem" ></ion-icon></button>
+    </ion-fab-list>
+  </div>
+  <div [hidden]="isPortrait">
+    <ion-fab-list side="right">
+      <button ion-fab *ngFor="let color of colors" (tap)="setColor(color)" [ngClass]="{active: isActiveColor(color)}"><ion-icon name="square" [ngStyle]="{color: color}"></ion-icon></button>
+    </ion-fab-list>
+    <ion-fab-list side="top">
+      <button ion-fab (tap)="setSize(5)" [ngClass]="{active: isActiveSize(5)}"><ion-icon name="radio-button-off" style="font-size:1rem" ></ion-icon></button>
+      <button ion-fab (tap)="setSize(10)" [ngClass]="{active: isActiveSize(10)}"><ion-icon name="radio-button-off" style="font-size:1.5rem" ></ion-icon></button>
+      <button ion-fab (tap)="setSize(15)" [ngClass]="{active: isActiveSize(15)}"><ion-icon name="radio-button-off" style="font-size:2rem" ></ion-icon></button>
+      <button ion-fab (tap)="setSize(20)" [ngClass]="{active: isActiveSize(20)}"><ion-icon name="radio-button-off" style="font-size:2.5rem" ></ion-icon></button>
+    </ion-fab-list>
+  </div>
 </ion-fab>
 
 <ion-fab right bottom>
   <button ion-fab color="light" (tap)="clear()"><ion-icon name="trash" class="half-transparent"></ion-icon></button>
+</ion-fab>
+
+<ion-fab left top [hidden]="!history.length">
+  <button ion-fab color="light" (tap)="undo()"><ion-icon name="undo" class="half-transparent"></ion-icon></button>
+</ion-fab>
+
+<ion-fab right top [hidden]="!future.length">
+  <button ion-fab color="light" (tap)="undo(true)"><ion-icon name="redo" class="half-transparent"></ion-icon></button>
+</ion-fab>
+
+<ion-fab center top [hidden]="true">
+  <button ion-fab color="light" (tap)="save()"><ion-icon name="download" class="half-transparent"></ion-icon></button>
 </ion-fab>
